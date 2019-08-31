@@ -12,7 +12,7 @@ class GetAccessToken extends BaseCommand
     const SCOPE_ALL = 'all';
     const TYPE_CLIENT_CREDENTIALS = 'client_credentials';
 
-    protected $url = 'https://open-api.10ss.net/oauth/oauth';
+    protected $apiUrl = 'https://open-api.10ss.net/oauth/oauth';
     protected $scope = GetAccessToken::SCOPE_ALL;
     protected $grant_type = GetAccessToken::TYPE_CLIENT_CREDENTIALS;
 

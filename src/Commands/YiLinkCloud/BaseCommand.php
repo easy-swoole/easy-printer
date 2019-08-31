@@ -18,7 +18,7 @@ class BaseCommand extends AbstractCommand
     protected $timestamp;    // 当前命令的时间戳
     protected $client_id;    // 当前终端编号
     protected $access_token; // 当前请求令牌
-    protected $url;          // 当前请求的路径
+    protected $apiUrl;          // 当前请求的路径
 
     /**
      * 获取请求的UUID
@@ -156,7 +156,7 @@ class BaseCommand extends AbstractCommand
     public function toRequestParam()
     {
         $data = $this->toArray();
-        unset($data['$url']);
+        unset($data['apiUrl']);
         return $data;
     }
 }

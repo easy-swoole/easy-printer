@@ -12,7 +12,7 @@ class PrintText extends BaseCommand
     protected $content;
     protected $origin_id;
     protected $machine_code;
-    protected $url = 'https://open-api.10ss.net/print/index';
+    protected $apiUrl = 'https://open-api.10ss.net/print/index';
 
     /**
      * 获取打印内容
