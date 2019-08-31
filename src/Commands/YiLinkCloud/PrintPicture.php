@@ -12,7 +12,7 @@ class PrintPicture extends BaseCommand
     protected $machine_code;
     protected $picture_url;
     protected $origin_id;
-    protected $url = 'https://open-api.10ss.net/pictureprint/index';
+    protected $apiUrl = 'https://open-api.10ss.net/pictureprint/index';
 
     /**
      * @return mixed
