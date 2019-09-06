@@ -7,6 +7,7 @@ use EasySwoole\EasyPrinter\Commands\YiLinkCloud\GetAccessToken;
 use EasySwoole\HttpClient\Bean\Response;
 use EasySwoole\HttpClient\HttpClient;
 use Exception;
+use SwooleKit\Cache\Cache;
 use Throwable;
 
 /**
@@ -17,7 +18,7 @@ class YiLinkCloudDriver implements DriverInterface
 {
     protected $clientId;
     protected $clientSecret;
-    protected $tokenCacheFile;
+    protected $tokenCacheKey;
 
     /**
      * YiLinkCloudDriver constructor.
@@ -28,7 +29,7 @@ class YiLinkCloudDriver implements DriverInterface
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->tokenCacheFile = sys_get_temp_dir() . 'YiLinkCloud_' . $clientId . '.cache';
+        $this->tokenCacheKey = 'YiLinkCloud_' . $clientId;
     }
 
     /**
@@ -43,7 +44,7 @@ class YiLinkCloudDriver implements DriverInterface
         $commandPack->setClientId($this->clientId);
         $commandPack->setAccessToken($accessToken);
         $commandPack->prepareCommand($this->clientSecret);
-        $httpClient = new HttpClient($commandPack->getUrl());
+        $httpClient = new HttpClient($commandPack->getApiUrl());
         return $this->checkResponse($httpClient->post($commandPack->toRequestParam()));
     }
 
@@ -53,58 +54,24 @@ class YiLinkCloudDriver implements DriverInterface
      */
     function getAccessToken()
     {
-        $cacheToken = $this->getTokenCache();
+        $cacheToken = Cache::get($this->tokenCacheKey);
         if (is_null($cacheToken)) {
 
             $command = new GetAccessToken();
             $command->setClientId($this->clientId);
             $command->prepareCommand($this->clientSecret);
-            $httpClient = new HttpClient($command->getUrl());
+            $httpClient = new HttpClient($command->getApiUrl());
             $responseData = $this->checkResponse($httpClient->post($command->toRequestParam()));
 
             if (!isset($responseData['body']['access_token']) || empty($responseData['body']['access_token'])) {
                 throw new Exception('YiLinkCloud GetAccessToken Error!');
             }
 
-            $this->setTokenCache($responseData['body']['access_token']);
+            Cache::set($this->tokenCacheKey, $responseData['body']['access_token']);
             $cacheToken = $responseData['body']['access_token'];
         }
 
         return $cacheToken;
-    }
-
-    /**
-     * 读请求令牌缓存
-     * @return string|null
-     */
-    private function getTokenCache()
-    {
-        if (file_exists($this->tokenCacheFile) && $fileContent = file_get_contents($this->tokenCacheFile)) {
-            $decodeContent = unserialize($fileContent);
-            return isset($decodeContent['accessToken']) ? $decodeContent['accessToken'] : null;
-        }
-        return null;
-    }
-
-    /**
-     * 写入缓存令牌
-     * @param $accessToken
-     * @return bool|int
-     */
-    private function setTokenCache($accessToken)
-    {
-        $content = serialize(['accessToken' => $accessToken, 'saveTime' => time()]);
-        return file_put_contents($this->tokenCacheFile, $content);
-    }
-
-    /**
-     * 清除缓存文件
-     * @return bool
-     */
-    private function unsetTokenCache()
-    {
-        unlink($this->tokenCacheFile);
-        return true;
     }
 
     /**

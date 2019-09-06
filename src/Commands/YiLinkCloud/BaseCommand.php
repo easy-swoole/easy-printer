@@ -104,9 +104,9 @@ class BaseCommand extends AbstractCommand
      * 获取当前接口的Url
      * @return mixed
      */
-    public function getUrl()
+    public function getApiUrl()
     {
-        return $this->url;
+        return $this->apiUrl;
     }
 
     /**

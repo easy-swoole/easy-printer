@@ -12,7 +12,7 @@ class EasyPrinter
 {
     /**
      * 易联云打印
-     * @var YiLinkCloudDriver
+     * @var YiLinkCloudDriver[]
      */
     private static $yiLinkClouds = [];
 
@@ -20,11 +20,11 @@ class EasyPrinter
      * 获得易联云实例
      * @param $clientId
      * @param $clientSecret
-     * @return mixed
+     * @return YiLinkCloudDriver
      */
     public static function yiLinkCloud($clientId, $clientSecret)
     {
-        if (!(static::$yiLinkClouds[$clientId] instanceof YiLinkCloudDriver)) {
+        if (!isset(static::$yiLinkClouds[$clientId]) || !(static::$yiLinkClouds[$clientId] instanceof YiLinkCloudDriver)) {
             static::$yiLinkClouds[$clientId] = new YiLinkCloudDriver($clientId, $clientSecret);
         }
         return static::$yiLinkClouds[$clientId];
