@@ -7,7 +7,7 @@ use EasySwoole\EasyPrinter\Commands\YiLinkCloud\GetAccessToken;
 use EasySwoole\HttpClient\Bean\Response;
 use EasySwoole\HttpClient\HttpClient;
 use Exception;
-use SwooleKit\Cache\Cache;
+use Psr\SimpleCache\CacheInterface;
 use Throwable;
 
 /**
@@ -16,25 +16,45 @@ use Throwable;
  */
 class YiLinkCloudDriver implements DriverInterface
 {
+    /**
+     * @var string
+     */
     protected $clientId;
+
+    /**
+     * @var string
+     */
     protected $clientSecret;
+
+    /**
+     * @var string
+     */
     protected $tokenCacheKey;
+    /**
+     * @var CacheInterface
+     */
+    protected $cache;
 
     /**
      * YiLinkCloudDriver constructor.
-     * @param $clientId
-     * @param $clientSecret
+     *
+     * @param string         $clientId
+     * @param string         $clientSecret
+     * @param CacheInterface $cache
      */
-    function __construct($clientId, $clientSecret)
+    function __construct(string $clientId, string $clientSecret, CacheInterface $cache)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->tokenCacheKey = 'YiLinkCloud_' . $clientId;
+        $this->cache = $cache;
     }
 
     /**
      * 发送一个命令
+     *
      * @param BaseCommand $commandPack
+     *
      * @return array
      * @throws Throwable
      */
@@ -54,7 +74,7 @@ class YiLinkCloudDriver implements DriverInterface
      */
     function getAccessToken()
     {
-        $cacheToken = Cache::get($this->tokenCacheKey);
+        $cacheToken = $this->cache->get($this->tokenCacheKey);
         if (is_null($cacheToken)) {
 
             $command = new GetAccessToken();
@@ -67,8 +87,8 @@ class YiLinkCloudDriver implements DriverInterface
                 throw new Exception('YiLinkCloud GetAccessToken Error!');
             }
 
-            Cache::set($this->tokenCacheKey, $responseData['body']['access_token']);
             $cacheToken = $responseData['body']['access_token'];
+            $this->cache->set($this->tokenCacheKey, $cacheToken);
         }
 
         return $cacheToken;
@@ -76,7 +96,9 @@ class YiLinkCloudDriver implements DriverInterface
 
     /**
      * 检查响应内容
+     *
      * @param Response $comResponse
+     *
      * @return array
      * @throws Exception
      */

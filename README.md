@@ -21,10 +21,11 @@ use EasySwoole\EasyPrinter\EasyPrinter;
 require_once 'vendor/autoload.php';
 
 go(function () {
-
+    
+    $cache = new Cache(); // implements CacheInterface
     $clientId = '您的易联云应用ID';
     $clientSecret = '您的易联云应用秘钥';
-    $driver = EasyPrinter::yiLinkCloud($clientId, $clientSecret);
+    $driver = EasyPrinter::yiLinkCloud($clientId, $clientSecret,$cache);
 
     // 新建一条命令
     $PrintCommand = new PrintText();
