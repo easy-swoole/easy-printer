@@ -3,6 +3,7 @@
 namespace EasySwoole\EasyPrinter;
 
 use EasySwoole\EasyPrinter\Drivers\YiLinkCloudDriver;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * 云打印SDK集成
@@ -18,14 +19,16 @@ class EasyPrinter
 
     /**
      * 获得易联云实例
+     *
      * @param $clientId
      * @param $clientSecret
+     *
      * @return YiLinkCloudDriver
      */
-    public static function yiLinkCloud($clientId, $clientSecret)
+    public static function yiLinkCloud(string $clientId, string $clientSecret, CacheInterface $cache)
     {
         if (!isset(static::$yiLinkClouds[$clientId]) || !(static::$yiLinkClouds[$clientId] instanceof YiLinkCloudDriver)) {
-            static::$yiLinkClouds[$clientId] = new YiLinkCloudDriver($clientId, $clientSecret);
+            static::$yiLinkClouds[$clientId] = new YiLinkCloudDriver($clientId, $clientSecret, $cache);
         }
         return static::$yiLinkClouds[$clientId];
     }
