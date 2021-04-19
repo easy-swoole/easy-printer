@@ -20,12 +20,12 @@ class EasyPrinter
     /**
      * 获得易联云实例
      *
-     * @param $clientId
-     * @param $clientSecret
-     *
+     * @param string $clientId
+     * @param string $clientSecret
+     * @param CacheInterface $cache
      * @return YiLinkCloudDriver
      */
-    public static function yiLinkCloud(string $clientId, string $clientSecret, CacheInterface $cache)
+    public static function yiLinkCloud(string $clientId, string $clientSecret, CacheInterface $cache):YiLinkCloudDriver
     {
         if (!isset(static::$yiLinkClouds[$clientId]) || !(static::$yiLinkClouds[$clientId] instanceof YiLinkCloudDriver)) {
             static::$yiLinkClouds[$clientId] = new YiLinkCloudDriver($clientId, $clientSecret, $cache);
