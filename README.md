@@ -6,7 +6,7 @@
 
 ### 安装类库
 
-推荐使用Composer管理依赖，本类库要求Swoole环境，版本>=4.3.0，PHP版本>=7.1即可食用
+推荐使用Composer管理依赖，本类库要求Swoole环境，版本>=4.3.0，PHP版本>=7.1即可使用
 
 > composer require easyswoole/easy-printer
 
